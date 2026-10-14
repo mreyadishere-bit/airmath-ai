@@ -15,6 +15,23 @@ Repository: https://github.com/mreyadishere-bit/airmath-ai
 5. Every new commit to `main` triggers deployment. Refresh the website after the workflow completes.
 
 
+## Finger Math v4 — live webcam gesture calculator
+
+Switch to **Finger math**, enable your webcam, and raise both hands. MediaPipe supplies **21 anatomical landmarks per hand**, which AirMath draws on the live feed as a skeleton. Each digit is labeled **UP** or **DOWN**, along with the detected finger count.
+
+The camera itself shows operand A, operand B, the current count, a gesture-hold progress bar, and the full arithmetic result. The drawing calculator remains in the separate **Air draw** mode.
+
+**Gesture language:**
+
+1. **1–10 fingers**: hold still for **0.65 seconds** until the camera displays **Locked**.
+2. **Lower both hands out of view** for about **0.45 seconds** to add that number as a **chunk** to the current operand. Show ten again and repeat to make twenty. Example: 10 + 10 → A = 20.
+3. **Two thumbs up 👍👍**: hold for about **1 second** to commit any locked chunk and switch from **A** to **B**.
+4. Show fingers for B, hold and lower your hands to commit. Repeat for larger B values.
+5. **Two closed fists ✊✊**: hold for about **1.2 seconds** to commit the last locked chunk, then display **addition, subtraction, multiplication, and division** directly on the camera feed.
+6. A **single closed fist** can represent the number zero. Two fists are reserved for equals.
+
+The fallback buttons **Add chunk**, **Next**, **Calculate**, **Undo**, and **Reset** work even if you prefer not to use a command pose. Stable-pose detection helps prevent transient numbers from being accepted. Results are calculated locally without transmitting the camera feed. This is heuristic landmark-based finger counting, not a trained sign-language interpreter; actual accuracy depends on lighting, visibility of both hands, pose, and CPU/GPU speed.
+
 ## Camera troubleshooting (v3.1)
 
 - **Enable camera** first requests permission and shows the raw video immediately, without waiting for the AI hand-tracking model.
@@ -34,7 +51,7 @@ Repository: https://github.com/mreyadishere-bit/airmath-ai
 - You can edit any recognized expression before recalculating. This is important: the lightweight recognizer is **experimental**, and complex or untidy handwriting will often be misread.
 - If gesture detection struggles, enable **Always draw with index** (drawing only when the index is raised, without needing to curl other fingers).
 - The app supports mouse / touch drawing without camera. Choose “Try drawing with mouse / touch instead” to test it.
-- **Finger math** mode detects up to two hands / ten fingers. Capture A and B, then press Calculate to show addition, subtraction, multiplication and division. It can also auto-capture a different stable number; with two closed fists the calculation is triggered.
+- **Finger math** accepts cumulative chunks of 0–10 fingers per pose, two-thumbs-up to separate A/B, and two-fists to calculate. All results and hand landmarks are overlaid on the original video.
 - Camera selector chooses from available hardware devices. The browser preview does not place filters over the camera. If the picture is brown or blocked when viewed in the native Camera app too, check a physical shutter/obstruction and permissions. Software cannot see through a covered camera.
 
 ## Performance

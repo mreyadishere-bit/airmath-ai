@@ -1,4 +1,5 @@
 import {GestureCalculator} from './gesture-math.js?v=8';
+import {FINGER_BONES,PALM_BONES,VISUAL_COLORS,createVisualHandStates} from './hand-visual.js?v=9';
 
 /**
  * Minimal hand visuals and data-only UI. Never places results or controls over
@@ -7,14 +8,11 @@ import {GestureCalculator} from './gesture-math.js?v=8';
 export function createFingerUI({cursor,pen,mapPoint}) {
   const $=id=>document.getElementById(id);
   const engine=new GestureCalculator();
-  const segments=[
-    [0,1],[1,2],[2,3],[3,4],
-    [0,5],[5,6],[6,7],[7,8],
-    [0,9],[9,10],[10,11],[11,12],
-    [0,13],[13,14],[14,15],[15,16],
-    [0,17],[17,18],[18,19],[19,20]
-  ];
+  const visualStates=createVisualHandStates();
+  const palmOutline=[0,1,5,9,13,17];
+  const innerMesh=[[0,9],[0,13],[5,13],[5,17],[9,17],[1,9],[1,13]];
   const tips=[4,8,12,16,20];
+
   let lastSignature='';
   let lastMessage='';
   let lastCount='';
@@ -23,88 +21,78 @@ export function createFingerUI({cursor,pen,mapPoint}) {
     pen.clearRect(0,0,cursor.width,cursor.height);
   }
 
-  function renderSkeleton(hands, notes) {
+  function renderSkeleton(hands, fingerStates) {
     clearSkeleton();
-    if(!$('showSkeleton').checked || !cursor.width || !cursor.height) return;
-    const scale=Math.max(.78,Math.min(1.55,cursor.width/810));
-    for(const [handIndex,landmarks] of hands.slice(0,2).entries()) {
+    if(!$('showSkeleton').checked || !cursor.width || !cursor.height)return;
+    const scale=Math.max(.82,Math.min(1.48,cursor.width/820));
+    const segment=(a,b)=>{
+      pen.beginPath();pen.moveTo(a.x,a.y);pen.lineTo(b.x,b.y);pen.stroke();
+    };
+    for(const [handIndex,landmarks] of hands.slice(0,2).entries()){
       if(!Array.isArray(landmarks)||landmarks.length<21)continue;
-      const points=landmarks.map(point=>{
-        const pos=mapPoint(point);
-        return {x:pos.x*cursor.width,y:pos.y*cursor.height};
+      const points=landmarks.map(lm=>{
+        const p=mapPoint(lm);return{x:p.x*cursor.width,y:p.y*cursor.height};
       });
-      const other=handIndex===1?.86:1;
+      const states=fingerStates[handIndex]||[false,false,false,false,false];
       pen.save();
-      pen.globalAlpha=other;
-      pen.lineCap='round';
-      pen.lineJoin='round';
+      pen.globalAlpha=handIndex===1?.94:1;
+      pen.lineCap='round';pen.lineJoin='round';
 
-      // A softly lit palm plate with geometric connections and an inner mesh.
-      const palm=[0,1,5,9,13,17];
+      // Calm, neutral palm — the colored finger chains remain unmistakable.
       pen.beginPath();
-      palm.forEach((index,i)=>{
-        if(i===0)pen.moveTo(points[index].x,points[index].y);
-        else pen.lineTo(points[index].x,points[index].y);
+      palmOutline.forEach((index,i)=>{
+        const p=points[index];
+        if(i===0)pen.moveTo(p.x,p.y);else pen.lineTo(p.x,p.y);
       });
       pen.closePath();
-      pen.fillStyle='rgba(80,226,196,.075)';
+      pen.fillStyle='rgba(76,182,191,.065)';
       pen.fill();
-      pen.lineWidth=1.2*scale;
-      pen.strokeStyle='rgba(126,249,224,.27)';
-      pen.stroke();
+      pen.strokeStyle='rgba(134,215,215,.30)';
+      pen.lineWidth=1.25*scale;pen.stroke();
 
-      const mesh=[[0,9],[0,13],[5,13],[5,17],[9,17],[1,9],[1,13]];
-      pen.lineWidth=.9*scale;
-      pen.strokeStyle='rgba(130,242,220,.19)';
-      for(const [start,end] of mesh){
-        pen.beginPath();
-        pen.moveTo(points[start].x,points[start].y);
-        pen.lineTo(points[end].x,points[end].y);
-        pen.stroke();
-      }
+      // Subtle glass-like technical mesh with connected knuckles.
+      const mesh=innerMesh;
+      pen.strokeStyle='rgba(130,228,235,.24)';
+      pen.lineWidth=1.05*scale;
+      for(const [start,end] of [...PALM_BONES,...mesh])segment(points[start],points[end]);
 
-      // Dual-layer holographic bones: broad atmospheric glow and crisp core.
-      // Avoid text tags and opaque blocks over a person's hand or face.
-      for(const [start,end] of segments){
-        const a=points[start],b=points[end];
-        pen.beginPath();pen.moveTo(a.x,a.y);pen.lineTo(b.x,b.y);
-        pen.lineWidth=7*scale;
-        pen.strokeStyle='rgba(54,235,201,.18)';
-        pen.shadowColor='rgba(82,245,218,.65)';
-        pen.shadowBlur=9*scale;
-        pen.stroke();
-      }
-      pen.shadowBlur=0;
-      for(const [start,end] of segments){
-        const a=points[start],b=points[end];
-        pen.beginPath();pen.moveTo(a.x,a.y);pen.lineTo(b.x,b.y);
-        pen.lineWidth=2.7*scale;
-        pen.strokeStyle='rgba(159,255,234,.85)';
-        pen.stroke();
-        pen.beginPath();pen.moveTo(a.x,a.y);pen.lineTo(b.x,b.y);
-        pen.lineWidth=.85*scale;
-        pen.strokeStyle='rgba(245,255,250,.55)';
-        pen.stroke();
-      }
+      // Each bone takes the color of its own finger, not its neighbor.
+      // Three light passes mimic an expensive holographic display without
+      // using an expensive full-frame video filter or per-frame gradients.
+      for(let f=0;f<5;f++){
+        const palette=states[f]?VISUAL_COLORS.raised:VISUAL_COLORS.folded;
+        const bones=FINGER_BONES[f];
+        pen.shadowBlur=0;
+        pen.strokeStyle=palette.halo;pen.lineWidth=8.1*scale;
+        for(const [start,end] of bones)segment(points[start],points[end]);
+        pen.strokeStyle=palette.core;pen.lineWidth=3.65*scale;
+        for(const [start,end] of bones)segment(points[start],points[end]);
+        pen.strokeStyle=palette.light;pen.lineWidth=.9*scale;
+        for(const [start,end] of bones)segment(points[start],points[end]);
 
-      // Discrete joint hubs and dual-ring highlighted fingertips.
-      for(let i=0;i<points.length;i++){
-        const p=points[i],tip=tips.indexOf(i);
-        const raised=tip>=0&&notes[handIndex]?.fingers?.[tip];
-        if(tip>=0){
-          pen.beginPath();pen.arc(p.x,p.y,(raised?10:7)*scale,0,Math.PI*2);
-          pen.lineWidth=1.4*scale;
-          pen.strokeStyle=raised?'rgba(128,255,219,.62)':'rgba(175,220,224,.35)';
-          pen.stroke();
-          if(raised){
-            pen.beginPath();pen.arc(p.x,p.y,5*scale,0,Math.PI*2);
-            pen.fillStyle='rgba(103,255,213,.20)';pen.fill();
-          }
+        // Color each of the four knuckles/tip joints consistently.
+        const indices=[bones[0][0],bones[0][1],bones[1][1],bones[2][1]];
+        for(const index of indices){
+          const p=points[index];
+          pen.beginPath();pen.arc(p.x,p.y,2.45*scale,0,Math.PI*2);
+          pen.fillStyle=palette.core;pen.fill();
         }
-        pen.beginPath();
-        pen.arc(p.x,p.y,(tip>=0?3.1:2.05)*scale,0,Math.PI*2);
-        pen.fillStyle=raised?'#caffec':(tip>=0?'rgba(199,229,225,.8)':'rgba(222,255,247,.85)');
-        pen.fill();
+        const tip=points[tips[f]],open=!!states[f];
+        // Dual halo ring is stronger on raised fingers and subdued on folded.
+        pen.beginPath();pen.arc(tip.x,tip.y,(open?8.3:6.8)*scale,0,Math.PI*2);
+        pen.strokeStyle=palette.ring;pen.lineWidth=(open?1.65:1.3)*scale;
+        pen.shadowColor=palette.core;pen.shadowBlur=(open?8:4)*scale;pen.stroke();
+        pen.shadowBlur=0;
+        pen.beginPath();pen.arc(tip.x,tip.y,(open?4.5:3.5)*scale,0,Math.PI*2);
+        pen.fillStyle=palette.fill;pen.fill();
+        pen.beginPath();pen.arc(tip.x,tip.y,2.45*scale,0,Math.PI*2);
+        pen.fillStyle=palette.light;pen.fill();
+      }
+      // Small neutral wrist and palm anchor nodes.
+      for(const index of [0,5,9,13,17]){
+        const p=points[index];pen.beginPath();
+        pen.arc(p.x,p.y,1.9*scale,0,Math.PI*2);
+        pen.fillStyle='rgba(212,255,249,.85)';pen.fill();
       }
       pen.restore();
     }
@@ -160,7 +148,7 @@ export function createFingerUI({cursor,pen,mapPoint}) {
 
   function onHands(hands,now) {
     const state=engine.process(hands,now);
-    renderSkeleton(hands,state.notes);
+    renderSkeleton(hands,visualStates.update(hands,state.notes,now));
     update(state);
   }
   function run(method) {

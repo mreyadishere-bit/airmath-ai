@@ -1,5 +1,5 @@
-import {GestureCalculator} from './gesture-math.js?v=9';
-import {FINGER_BONES,PALM_BONES,VISUAL_COLORS,createVisualHandStates} from './hand-visual.js?v=9';
+import {GestureCalculator} from './gesture-math.js?v=10';
+import {FINGER_BONES,PALM_BONES,VISUAL_COLORS,createVisualHandStates} from './hand-visual.js?v=10';
 
 /**
  * Minimal hand visuals and data-only UI. Never places results or controls over

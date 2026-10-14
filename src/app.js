@@ -7,9 +7,33 @@ const ctx=ink.getContext('2d'),pen=cursor.getContext('2d');
 const s={mode:'draw',strokes:[],active:null,air:null,pointer:false,mirror:true,fist:0,fired:false,count:null,ready:null,since:0,a:null,b:null,trackerReady:false};
 const tracker=createTracker(video,{
  onHands:(hands,time)=>onHands(hands,time),
- onStatus:(message,type)=>{status(message,type);if(type==='live' && video.srcObject && video.readyState>=2){$('beforeCamera').hidden=true;stage.classList.remove('video-hidden');}},
+ onCameraReady:()=>{
+  $('beforeCamera').hidden=true;
+  $('cameraHelp').hidden=true;
+  $('trackingIssue').hidden=true;
+  stage.classList.remove('video-hidden');
+  video.addEventListener('loadedmetadata',size,{once:true});
+  cameras();
+  size();
+ },
+ onTrackingReady:()=>{$('trackingIssue').hidden=true;$('handInfo').textContent='Tracking ready';},
+ onTrackingError:message=>{
+  $('trackingIssueText').textContent=message;
+  $('trackingIssue').hidden=false;
+  $('handInfo').textContent='Tracking unavailable';
+ },
+ onStatus:(message,type)=>{
+  status(message,type);
+  if(type==='live'&&video.srcObject){$('beforeCamera').hidden=true;stage.classList.remove('video-hidden');}
+ },
  onFPS:(fps,num)=>{$('fps').textContent=fps+' tracking fps';$('handInfo').textContent=num+' hand(s)';},
- onError:message=>{$('errorMessage').hidden=false;$('errorMessage').textContent=message;}
+ onError:message=>{
+  $('cameraHelp').textContent=message;
+  $('cameraHelp').hidden=false;
+  $('errorMessage').hidden=false;
+  $('errorMessage').textContent=message;
+  $('startBtn').textContent='↻ Retry camera';
+ }
 });
 function status(text,type=''){$('status').className='status '+type;$('statusText').textContent=text;}
 function size(){const b=stage.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,1.5);if(!b.width)return;for(const c of [ink,cursor]){c.width=Math.round(b.width*d);c.height=Math.round(b.height*d);}render();}
@@ -48,8 +72,32 @@ $('captureA').onclick=()=>capture('a');$('captureB').onclick=()=>capture('b');
 function fingerSolve(){if(s.a===null||s.b===null){label('Capture A and B first');return;}const a=s.a,b=s.b,ops=[['Add',a+b],['Subtract',a-b],['Multiply',a*b],['Divide',b===0?'Undefined':Number((a/b).toPrecision(8))]];const out=$('fourOps');out.replaceChildren();let overlay=$('opsOverlay');if(!overlay){overlay=document.createElement('div');overlay.id='opsOverlay';overlay.className='ops-on-camera';stage.append(overlay);}overlay.replaceChildren();for(const [name,value] of ops){for(const parent of [out,overlay]){const cell=document.createElement('div'),title=document.createElement('span'),number=document.createElement('b');title.textContent=name;number.textContent=value;cell.append(title,number);parent.append(cell);}}overlay.hidden=false;}
 $('fingerSolve').onclick=fingerSolve;
 async function cameras(){try{const d=(await navigator.mediaDevices.enumerateDevices()).filter(x=>x.kind==='videoinput'),el=$('deviceSelect'),selected=el.value;el.replaceChildren(new Option('Default camera',''));d.forEach((v,i)=>el.add(new Option(v.label||'Camera '+(i+1),v.deviceId)));if([...el.options].some(o=>o.value===selected))el.value=selected;}catch{}}
-async function start(){const btn=$('startBtn');btn.disabled=true;$('errorMessage').hidden=true;try{await tracker.start($('deviceSelect').value);$('beforeCamera').hidden=true;stage.classList.remove('video-hidden');cameras();size();}catch(e){$('errorMessage').hidden=false;$('errorMessage').textContent=e.message;status('Camera / tracking error','error');if(!video.srcObject)$('beforeCamera').hidden=false;}finally{btn.disabled=false;}}
-$('startBtn').onclick=start;$('restartCamera').onclick=start;$('deviceSelect').onchange=()=>{if(video.srcObject)start();};
+async function start(){
+ const btn=$('startBtn');
+ btn.disabled=true;
+ $('cameraHelp').hidden=true;
+ $('trackingIssue').hidden=true;
+ $('errorMessage').hidden=true;
+ $('handInfo').textContent='Preparing…';
+ try{
+  await tracker.start($('deviceSelect').value);
+ }catch(e){
+  if(!video.srcObject){
+   $('beforeCamera').hidden=false;
+   $('handInfo').textContent='Camera unavailable';
+  }
+ }finally{btn.disabled=false;}
+}
+$('startBtn').onclick=start;
+$('restartCamera').onclick=start;
+$('retryTracking').onclick=async()=>{
+ $('trackingIssue').hidden=true;
+ try{await tracker.retryTracking();}catch(error){
+  $('trackingIssueText').textContent=error.message;
+  $('trackingIssue').hidden=false;
+ }
+};
+$('deviceSelect').onchange=()=>{if(video.srcObject)start();};
 $('mirror').onchange=e=>{s.mirror=e.target.checked;video.classList.toggle('unmirrored',!s.mirror);};
 $('offlineBtn').onclick=()=>{$('beforeCamera').hidden=true;stage.classList.add('video-hidden');status('Mouse / touch mode','live');label('Draw with mouse or touch');size();};
 addEventListener('pagehide',()=>tracker.stop());size();setMode('draw');

@@ -24,13 +24,15 @@ jobs:
         uses: actions/checkout@v4
       - name: Test math
         run: node tests/math.test.mjs
+      - name: Validate browser JavaScript
+        run: node --check src/tracker.js && node --check src/app.js && node --check src/recognize.js
       - name: Prepare static site
         run: |
           mkdir -p _site
           cp index.html style.css _site/
           cp -r src _site/
           touch _site/.nojekyll
-          sed -i "s/?v=3/?v=${GITHUB_SHA}/g" _site/index.html
+          sed -i "s/?v=4/?v=${GITHUB_SHA}/g" _site/index.html
       # One-time setup: Repository Settings → Pages → Source → GitHub Actions.
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5

@@ -57,6 +57,18 @@ pose(g,[hand(0),hand(0)],12600,1250);
 assert.ok(g.result,'two fists calculate');
 assert.deepEqual(g.result.map(r=>r.value),['545','525','5350','53.5']);
 
+// A single 👍 is the separator, and should never be mistaken for numeric 1.
+const singleThumb=new GestureCalculator();
+pose(singleThumb,[hand(4)],100);
+assert.equal(singleThumb.a,'4');
+singleThumb.process([hand(1,'thumb')],1500);
+assert.equal(singleThumb.a,'4','Thumb-only pose must not append digit 1');
+singleThumb.process([hand(1,'thumb')],2520);
+assert.equal(singleThumb.active,'B','One thumb-up held ~1 second should move A to B');
+assert.equal(singleThumb.a,'4');
+pose(singleThumb,[hand(1)],3000);
+assert.equal(singleThumb.b,'1','Raised index finger must still enter numeric 1');
+
 const repeated=new GestureCalculator();
 pose(repeated,[hand(5)],100);
 disappear(repeated,1100);

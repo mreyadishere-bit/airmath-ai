@@ -55,21 +55,21 @@ export function createFingerUI({stage,video,cursor,pen,mapPoint}) {
     $('numberB').textContent=s.b??'—';
     $('overlayA').textContent=s.a??'—';
     $('overlayB').textContent=s.b??'—';
-    $('chunksA').textContent=s.chunksA.length?s.chunksA.join(' + '):'Waiting...';
-    $('chunksB').textContent=s.chunksB.length?s.chunksB.join(' + '):'Waiting...';
+    $('chunksA').textContent=s.chunksA.length?s.chunksA.join(' › '):'Waiting...';
+    $('chunksB').textContent=s.chunksB.length?s.chunksB.join(' › '):'Waiting...';
     $('operandA').classList.toggle('selected',s.active==='A'&&!s.result);
     $('operandB').classList.toggle('selected',s.active==='B'&&!s.result);
     $('fingerStage').textContent=s.result?'RESULTS':('ENTER '+s.active);
     $('fingerCount').textContent=s.visibleCount??'—';
     $('fingerLiveValue').textContent=s.visibleCount??'—';
-    $('fingerPreview').textContent=s.pending===null?'Hold your hands steady':('Locked: '+s.pending);
+    $('fingerPreview').textContent=s.visibleCount===null?'Show your fingers':(s.latched?'Added ✓ · change the pose':('Next digit: '+s.visibleCount));
     $('fingerInstruction').textContent=s.message;
     $('commandProgress').style.width=Math.round(s.progress*100)+'%';
     const resultNode=$('fingerResult'),operations=$('cameraOperations'),sidebar=$('fourOps');
     if(s.result) {
       resultNode.hidden=false;sidebar.hidden=false;
       $('fingerLive').hidden=true;
-      $('resultEquation').textContent=s.a+' & '+s.b;
+      $('resultEquation').textContent=s.a+' and '+s.b;
       const signature=s.a+'|'+s.b;
       if(operations.dataset.signature!==signature){
         operations.replaceChildren();sidebar.replaceChildren();

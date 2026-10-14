@@ -35,7 +35,6 @@ function requestFit(){
   fitScheduled=true;
   requestAnimationFrame(()=>{fitScheduled=false;fitViewport();});
 }
-let mirror=true;
 let trackerReady=false;
 
 function setStatus(message,type='') {

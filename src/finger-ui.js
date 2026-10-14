@@ -1,4 +1,4 @@
-import {GestureCalculator} from './gesture-math.js?v=8';
+import {GestureCalculator} from './gesture-math.js?v=9';
 import {FINGER_BONES,PALM_BONES,VISUAL_COLORS,createVisualHandStates} from './hand-visual.js?v=9';
 
 /**

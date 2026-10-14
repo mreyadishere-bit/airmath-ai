@@ -1,5 +1,5 @@
-import {createTracker} from './tracker.js?v=9';
-import {createFingerUI} from './finger-ui.js?v=9';
+import {createTracker} from './tracker.js?v=10';
+import {createFingerUI} from './finger-ui.js?v=10';
 
 const $=id=>document.getElementById(id);
 const stage=$('stage'),video=$('camera'),cursor=$('cursor');

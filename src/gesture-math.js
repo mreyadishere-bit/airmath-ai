@@ -77,8 +77,12 @@ export class GestureCalculator {
     };
   }
   /** Add one token; tokens are concatenated, never numerically added. */
-  commit(value=this.pending) {
+  commit(value=this.pending??this.visibleCount) {
     if(this.result) return false;
+    if(this.latched) {
+      this.message='This pose has already been entered. Change pose to append another digit.';
+      return false;
+    }
     const n=value;
     if(n===null || !Number.isInteger(n) || n<0 || n>10) {
       this.message='Show a valid number (0–10) and hold it steady';

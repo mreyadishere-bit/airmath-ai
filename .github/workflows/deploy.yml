@@ -23,7 +23,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Test math
-        run: node tests/math.test.mjs && node tests/gesture-math.test.mjs
+        run: node tests/math.test.mjs && node tests/gesture-math.test.mjs && node tests/ui-contract.test.mjs
       - name: Validate browser JavaScript
         run: node --check src/tracker.js && node --check src/app.js && node --check src/recognize.js && node --check src/gesture-math.js && node --check src/finger-ui.js
       - name: Prepare static site

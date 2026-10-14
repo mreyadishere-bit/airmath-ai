@@ -114,7 +114,7 @@ export class GestureCalculator {
     if(this.result)return false;
     if(this.pending!==null && !this.latched)this.commit();
     if(this.active!=='B'||!this.chunksB.length) {
-      this.message='Enter A, use 👍👍 for Next, enter B, then ✊✊ for Equal';
+      this.message='Enter A, use 👍 for Next, enter B, then ✊✊ for Equal';
       return false;
     }
     try {
@@ -152,14 +152,17 @@ export class GestureCalculator {
       return {...this.snapshot(),notes};
     }
     this.noHandsSince=null;
-    const bothThumbs=notes.length===2&&notes.every(n=>n.gesture==='thumb');
+    // A single clearly raised thumb is enough. A second visible closed hand is harmless.
+    // A lone raised INDEX remains the normal digit 1.
+    const thumbNext=notes.some(n=>n.gesture==='thumb') &&
+      notes.every(n=>n.gesture==='thumb'||n.gesture==='fist');
     const bothFists=notes.length===2&&notes.every(n=>n.gesture==='fist');
-    const cmd=bothThumbs?'next':bothFists?'equal':null;
+    const cmd=bothFists?'equal':thumbNext?'next':null;
     if(cmd){
       this.visibleCount=null;this.stableCount=null;this.pending=null;this.latched=false;
       if(this.command!==cmd){this.command=cmd;this.commandSince=now;this.commandFired=false;}
       this.progress=Math.min(1,(now-this.commandSince)/(cmd==='next'?950:1150));
-      this.message=cmd==='next'?'👍 👍 Hold to save A and enter B':'✊ ✊ Hold to calculate';
+      this.message=cmd==='next'?'👍 Hold to save A and enter B':'✊ ✊ Hold to calculate';
       if(!this.commandFired&&this.progress>=1){
         this.commandFired=true;
         if(cmd==='next')this.next();else this.equal();

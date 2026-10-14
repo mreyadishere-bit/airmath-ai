@@ -1,4 +1,4 @@
-# AirMath AI — Camera Edition v5
+# AirMath AI — One-Screen Camera Edition v5.1
 
 A minimal, browser-based finger-gesture calculator with a live, unfiltered webcam.
 
@@ -7,15 +7,19 @@ A minimal, browser-based finger-gesture calculator with a live, unfiltered webca
 ## Experience
 
 - **Camera first:** no sidebar, oversized status cards, or instructions obscuring the camera. The video uses its native aspect ratio.
-- **Discreet tracking:** MediaPipe detects 21 landmarks per hand; thin connecting lines and small fingertip markers may be toggled off in Settings. No floating finger labels.
+- **Holographic hand tracking:** MediaPipe detects 21 landmarks per hand; glowing dual-layer bones, an illuminated palm mesh and subtle fingertip halos can be toggled off in Settings. No floating finger labels.
 - **Positional digits:** hold five fingers, then three, then five; the input becomes **535**, not 13. Hold each pose for about 0.8 seconds. To repeat the same digit, move hands out of view briefly first.
 - **One fist = 0.** Ten fingers together append the two-character token 10.
-- **Two thumbs up = Next:** hold for about one second to switch from operand A to B.
+- **One thumb up 👍 = Next:** hold for about one second to switch from operand A to B. One raised index finger ☝ is still the digit 1.
 - **Two fists = Equals:** hold for about 1.2 seconds to calculate.
-- **Results stay OUTSIDE the camera:** a restrained result dock appears **below** the video with addition, subtraction, multiplication and division. It never covers your hands or face.
+- **Results are always in view:** the result dock reserves space **below** the video, even before solving, showing placeholders. On Equals, four operations fill the same area without making the page taller or covering your hands/face.
 - **Compact controls:** Undo, Next, Equals and Reset beneath the video. Other camera controls are inside the gear icon.
 - Accurate large integer operations use BigInt. Division is rounded to 10 decimal places.
 - Camera footage remains on your device.
+
+## No-scroll viewport layout
+
+The page is a full-height application (100dvh), not a scrolling dashboard. The app fits the native-aspect-ratio camera into the area **remaining after** the header, command bar and fixed-height result dock. It recalculates on browser resizing, orientation changes, and camera metadata loading. The result dock remains below the video and visible within the browser viewport. On extremely small viewports or high browser zoom, there are physical display limits; reduce zoom or use a larger window if controls become cramped.
 
 ## Setup and troubleshooting
 

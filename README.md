@@ -15,6 +15,16 @@ Repository: https://github.com/mreyadishere-bit/airmath-ai
 5. Every new commit to `main` triggers deployment. Refresh the website after the workflow completes.
 
 
+## Camera troubleshooting (v3.1)
+
+- **Enable camera** first requests permission and shows the raw video immediately, without waiting for the AI hand-tracking model.
+- If access fails, the explanation and **Retry camera** appear inside the camera panel (not just in a box below the fold).
+- **Permission denied:** click the camera/padlock icon next to the site's URL, allow camera access, and retry. Windows camera privacy settings may also need permission.
+- **Camera in use:** close video calls and Windows Camera, then restart.
+- **No matching camera:** try **Default camera** or the device selector under Camera & performance.
+- **Camera visible but hand tracking unavailable:** the page remains usable with mouse/touch; press **Retry tracking** to reload MediaPipe.
+- If the picture is physically obscured in your operating system's camera preview as well, remove the physical camera cover or check the selected webcam. Software cannot see through an obstructed lens.
+
 ## Usage
 
 - `Enable camera`: allow permission. Your raw camera preview appears before the hand-tracking model downloads.

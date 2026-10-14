@@ -28,3 +28,70 @@
  .tracking-issue{font-size:11px;padding:8px 10px}
  .camera-help{font-size:11px}
 }
+
+
+/* AirMath 4.0: the entire gesture calculator lives INSIDE the camera. */
+.stage.count-mode{isolation:isolate}
+.count-mode #cursor{z-index:2}
+.finger-hud{position:absolute;inset:0;z-index:3;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(10px,2%,20px);font-variant-numeric:tabular-nums}
+.finger-hud-top{display:flex;flex-direction:column;gap:12px;align-items:flex-start;max-width:100%}
+.finger-app-label{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;background:#071424e8;border:1px solid #4c6382;border-radius:30px;padding:6px 12px;color:#e8f3ff;font-size:10px;letter-spacing:1px;font-weight:800;box-shadow:0 6px 16px #0004}
+.finger-app-label small{font-size:9px;background:#344e73;border-radius:10px;padding:3px 7px;letter-spacing:.5px}
+.live-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#6af0bc;box-shadow:0 0 0 4px #67fab018}
+.finger-operands{display:flex;align-items:center;gap:7px;max-width:100%}
+.operand-card{min-width:112px;max-width:210px;display:flex;flex-direction:column;gap:2px;padding:9px 12px;background:#061629dc;border:1px solid #47607c;border-radius:11px;box-shadow:0 6px 20px #0006}
+.operand-card.selected{border-color:#76d1ff;background:#102c46ed;box-shadow:0 0 0 1px #62c8fd60}
+.operand-card small{font-size:9px;letter-spacing:1px;color:#a5b9d6}
+.operand-card strong{font-size:clamp(24px,3.2vw,36px);line-height:1.05;color:#fff}
+.operand-card span{font-size:10px;white-space:nowrap;max-width:175px;overflow:hidden;text-overflow:ellipsis;color:#91c1ff}
+.operand-divider{background:#0d1a2bde;color:#eaf4ff;padding:4px 7px;border-radius:7px;font-size:16px}
+.finger-live-count{position:absolute;right:16px;top:18px;min-width:90px;max-width:145px;display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center;border:1px solid #4c77a9;border-radius:14px;padding:10px 14px;background:#091b32dc;box-shadow:0 7px 18px #0005}
+.finger-live-count small{font-size:9px;letter-spacing:.8px;color:#a1c7e9}
+.finger-live-count strong{font-size:clamp(28px,4vw,43px);line-height:1.2;color:#6ff4bc}
+.finger-live-count span{font-size:10px;color:#b7c6da}
+.finger-hud-bottom{width:100%;display:flex;flex-direction:column;gap:8px}
+.finger-command{width:100%;display:grid;gap:7px;background:#071424ed;border:1px solid #375c83;border-radius:11px;padding:10px 13px;box-shadow:0 5px 18px #0006}
+.finger-command .command-text{color:#ecf6ff;font-weight:600;font-size:12px;line-height:1.35}
+.command-progress{height:5px;width:100%;border-radius:5px;background:#34465e;overflow:hidden}
+.command-progress>span{display:block;height:100%;width:0;background:linear-gradient(90deg,#48a5ff,#64fbc0);border-radius:5px;transition:width .1s linear}
+.command-legend{color:#94b7d6;font-size:10px;white-space:normal}
+.finger-result-overlay{width:100%;background:#08172df2;border-radius:12px;border:1px solid #60a3e8;box-shadow:0 6px 36px #0009;padding:12px}
+.result-overline{font-size:10px;font-weight:800;letter-spacing:1.4px;color:#8de7cd;display:flex;justify-content:space-between;gap:10px;margin:0 0 9px}
+.result-overline span{color:white;font-size:12px;letter-spacing:normal}
+.result-tile-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.finger-result-tile{min-width:0;display:flex;flex-direction:column;gap:2px;padding:10px;border-radius:10px;background:#1b3249;border:1px solid #3a5e83}
+.finger-result-tile small{font-size:11px;color:#b3c8df}
+.finger-result-tile strong{font-size:clamp(15px,2.3vw,26px);line-height:1.25;color:#6af8b7;overflow-wrap:anywhere}
+.finger-result-tile span{font-size:9px;color:#c5d7ea}
+.gesture-steps{display:grid;gap:8px;margin:12px 0 15px}
+.gesture-steps>div{display:flex;align-items:center;gap:8px;padding:9px 10px;background:#0d2032;border:1px solid #2b4763;border-radius:9px}
+.gesture-steps b{font-size:12px;color:#a3d8fc;min-width:90px}
+.gesture-steps span{font-size:11px;color:#c3cfdf}
+.gesture-buttons{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}
+.gesture-buttons button{padding:10px 5px;border-radius:8px;background:#203b57;border:1px solid #476b90;color:#ebf5ff;font-size:12px;font-weight:600}
+.gesture-buttons button.primary{background:linear-gradient(120deg,#3379ec,#626cea);border-color:#72a5fa}
+.gesture-buttons button:hover{filter:brightness(1.12)}
+.finger-current b{color:#8ff3c7}
+.four-ops:not([hidden]){display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.four-ops .finger-result-tile{background:#0d2435}
+@media(max-width:650px){
+ .finger-hud{padding:8px}
+ .finger-hud-top{gap:6px}
+ .finger-app-label{font-size:8px;padding:5px 8px}
+ .finger-live-count{right:7px;top:42px;min-width:60px;padding:5px 7px}
+ .finger-live-count small{font-size:7px}
+ .finger-live-count strong{font-size:25px}
+ .finger-live-count span{font-size:8px}
+ .operand-card{min-width:77px;padding:7px;max-width:116px}
+ .operand-card strong{font-size:22px}
+ .operand-card span{font-size:8px;max-width:106px}
+ .operand-divider{padding:3px;font-size:11px}
+ .finger-command{padding:8px}
+ .finger-command .command-text{font-size:10px}
+ .command-legend{font-size:8px}
+ .finger-result-overlay{padding:8px}
+ .result-tile-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}
+ .finger-result-tile{padding:6px}
+ .finger-result-tile strong{font-size:17px}
+ .finger-result-tile small,.finger-result-tile span{font-size:9px}
+}

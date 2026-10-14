@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#080d12">
   <meta name="description" content="AirMath AI — a beautifully simple gesture calculator. Count with your hands, calculate in real time.">
   <title>AirMath AI — Gesture Calculator</title>
-  <link rel="stylesheet" href="./style.css?v=9">
+  <link rel="stylesheet" href="./style.css?v=10">
 </head>
 <body>
   <div class="app">
@@ -81,16 +81,17 @@
       <select id="deviceSelect"><option value="">Default camera</option></select>
       <div class="setting-row"><label for="mirror">Mirror preview</label><input type="checkbox" id="mirror" checked></div>
       <div class="setting-row"><label for="showSkeleton">Hand landmarks</label><input type="checkbox" id="showSkeleton" checked></div>
+      <div class="finger-color-legend" aria-label="Hand tracking colors"><span><i class="legend-dot legend-open"></i>Raised finger</span><span><i class="legend-dot legend-folded"></i>Folded finger</span></div>
       <label class="setting-label" for="quality">Tracking performance</label>
       <select id="quality"><option value="fast" selected>Fast</option><option value="balanced">Balanced</option><option value="high">Precise</option></select>
       <button class="drawer-button" id="restartCamera" type="button">Restart camera ↗</button>
       <button class="drawer-button" id="captureA" type="button">Capture visible digit</button>
       <details class="gesture-help"><summary>Gestures</summary><p>Hold a digit for 0.8s to append it. Change fingers for the next digit. To repeat the same digit, move hands away briefly. One thumb up = Next. Two fists = Calculate. One fist = 0.</p></details>
       <div id="errorMessage" class="error-message" role="alert" hidden></div>
-      <div class="drawer-footer">v5.2 · Finger colors</div>
+      <div class="drawer-footer">v5.2 · Color tracking</div>
     </aside>
 
-    <script type="module" src="./src/app.js?v=9"></script>
+    <script type="module" src="./src/app.js?v=10"></script>
   </div>
 </body>
 </html>

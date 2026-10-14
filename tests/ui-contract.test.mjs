@@ -15,7 +15,7 @@ for(const forbidden of ['id="cameraOperations"','id="fingerInstruction"','id="ov
 }
 assert.ok(!html.includes('class="sidebar"'),'Old sidebar must be removed');
 assert.ok(!html.includes('class="intro"'),'Old hero section must be removed');
-assert.ok(!finger.includes('UP\\'') && !finger.includes('DOWN\\''),'Landmark names must not be drawn');
+assert.ok(!finger.includes('tipNames') && !finger.includes("label='HAND"),'Landmark names must not be drawn');
 assert.ok(css.includes('.settings-drawer'),'Settings must be collapsible');
 assert.ok(js.includes("tracker.setMode('count')"),'Launch directly in finger math mode');
 const ids=[...js.matchAll(/\$\('([A-Za-z0-9_-]+)'\)/g),

@@ -1,4 +1,4 @@
-# AirMath AI — Web Edition v3
+# AirMath AI — Web Edition v4.1
 
 AirMath AI turns finger gestures into handwritten maths on a transparent canvas over your **unmodified webcam feed**. Solve simple handwritten arithmetic, or count fingers and compute four arithmetic operations.
 
@@ -15,22 +15,26 @@ Repository: https://github.com/mreyadishere-bit/airmath-ai
 5. Every new commit to `main` triggers deployment. Refresh the website after the workflow completes.
 
 
-## Finger Math v4 — live webcam gesture calculator
+## Finger Math v4.1 — positional digit entry
 
 Switch to **Finger math**, enable your webcam, and raise both hands. MediaPipe supplies **21 anatomical landmarks per hand**, which AirMath draws on the live feed as a skeleton. Each digit is labeled **UP** or **DOWN**, along with the detected finger count.
 
 The camera itself shows operand A, operand B, the current count, a gesture-hold progress bar, and the full arithmetic result. The drawing calculator remains in the separate **Air draw** mode.
 
-**Gesture language:**
+**Gesture language — decimal place-value entry (not addition):**
 
-1. **1–10 fingers**: hold still for **0.65 seconds** until the camera displays **Locked**.
-2. **Lower both hands out of view** for about **0.45 seconds** to add that number as a **chunk** to the current operand. Show ten again and repeat to make twenty. Example: 10 + 10 → A = 20.
-3. **Two thumbs up 👍👍**: hold for about **1 second** to commit any locked chunk and switch from **A** to **B**.
-4. Show fingers for B, hold and lower your hands to commit. Repeat for larger B values.
-5. **Two closed fists ✊✊**: hold for about **1.2 seconds** to commit the last locked chunk, then display **addition, subtraction, multiplication, and division** directly on the camera feed.
-6. A **single closed fist** can represent the number zero. Two fists are reserved for equals.
+1. **One digit from 0 to 9:** show the finger count and hold for **0.8 seconds**. The digit appears on the RIGHT of the current number. Example: **5 → 3 → 5 forms 535**, not 13.
+2. **Next digit:** change the finger count and hold the next pose. To enter the **same digit again**, briefly remove both hands from view before repeating.
+3. **Ten raised fingers:** a special two-character token `10`; ten then three forms `103`. Or enter ten as 1 followed by 0.
+4. **Zero:** one closed fist held steady. Two closed fists are reserved for Equals.
+5. **Two thumbs up 👍👍:** hold about a second to finish A and begin B.
+6. **Two closed fists ✊✊:** hold about 1.2 seconds to display the four arithmetic results directly on the video.
 
-The fallback buttons **Add chunk**, **Next**, **Calculate**, **Undo**, and **Reset** work even if you prefer not to use a command pose. Stable-pose detection helps prevent transient numbers from being accepted. Results are calculated locally without transmitting the camera feed. This is heuristic landmark-based finger counting, not a trained sign-language interpreter; actual accuracy depends on lighting, visibility of both hands, pose, and CPU/GPU speed.
+Example: enter A as 5, 3, 5 → **535**, use 👍👍, enter B as 2, 4 → **24**, then ✊✊ to calculate.
+
+Numbers are constructed as decimal strings and computed using **BigInt** for precise whole-number arithmetic (up to 100 digits per operand). Division is shown with up to 10 decimal places.
+
+The fallback buttons **Add digit**, **Next**, **Calculate**, **Undo**, and **Reset** work even if you prefer not to use a command pose. Stable-pose detection helps prevent transient numbers from being accepted. Results are calculated locally without transmitting the camera feed. This is heuristic landmark-based finger counting, not a trained sign-language interpreter; actual accuracy depends on lighting, visibility of both hands, pose, and CPU/GPU speed.
 
 ## Camera troubleshooting (v3.1)
 
@@ -51,13 +55,13 @@ The fallback buttons **Add chunk**, **Next**, **Calculate**, **Undo**, and **Res
 - You can edit any recognized expression before recalculating. This is important: the lightweight recognizer is **experimental**, and complex or untidy handwriting will often be misread.
 - If gesture detection struggles, enable **Always draw with index** (drawing only when the index is raised, without needing to curl other fingers).
 - The app supports mouse / touch drawing without camera. Choose “Try drawing with mouse / touch instead” to test it.
-- **Finger math** accepts cumulative chunks of 0–10 fingers per pose, two-thumbs-up to separate A/B, and two-fists to calculate. All results and hand landmarks are overlaid on the original video.
+- **Finger math** appends each stable digit to the RIGHT (or a two-character token for 10), two-thumbs-up to separate A/B, and two-fists to calculate. All results and hand landmarks are overlaid on the original video.
 - Camera selector chooses from available hardware devices. The browser preview does not place filters over the camera. If the picture is brown or blocked when viewed in the native Camera app too, check a physical shutter/obstruction and permissions. Software cannot see through a covered camera.
 
 ## Performance
 
 - Camera video is displayed **directly by the browser**, at the device's normal refresh rate; not re-rendered by OpenCV, a Python GUI, or a 3D scene.
-- The hand detector works on a **256-pixel copy** of the camera at a separately throttled 10/16/23 FPS target. The UI remains separate from detector workload; results depend on hardware. MediaPipe uses GPU if supported, CPU otherwise.
+- The hand detector works on a **224-pixel copy** of the camera at a separately throttled 10/16/23 FPS target. The UI remains separate from detector workload; results depend on hardware. MediaPipe uses GPU if supported, CPU otherwise.
 - The OCR recognizer is a lightweight, local, **approximate** template/stroke recognizer. It does not continuously run. If high accuracy with complex equations is required, a heavier dedicated handwriting model or a server-side OCR endpoint will be necessary.
 - First use needs a network connection to load the MediaPipe JavaScript/WASM hand detector and model; later visits may reuse the browser cache, depending on its caching policies.
 

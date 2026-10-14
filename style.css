@@ -354,3 +354,13 @@ body{min-height:0}
   .results-panel{height:103px}
   .results-heading{margin-bottom:3px}
 }
+
+/* Discreet key, visible in Settings only — never on the camera feed. */
+.finger-color-legend{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:4px 0 11px;color:#a2b8bc;font-size:11px;
+}
+.finger-color-legend>span{display:inline-flex;align-items:center;gap:6px}
+.legend-dot{width:9px;height:9px;display:inline-block;border-radius:50%}
+.legend-open{background:#7dffd3;box-shadow:0 0 9px #2af0b68c}
+.legend-folded{background:#ffa4b0;box-shadow:0 0 9px #ff6f9280}

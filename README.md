@@ -4,13 +4,16 @@ AirMath AI turns finger gestures into handwritten maths on a transparent canvas 
 
 **Why a website instead of Python?** No repeated installers or Python dependencies. Open the same URL on Windows, Android, macOS, or another webcam-enabled device. All camera processing happens in your browser. GitHub Actions can deploy each commit automatically to GitHub Pages.
 
-## First-time publishing on GitHub
+## GitHub Pages deployment
 
-1. Create a **public** repository named `airmath-ai` on your own account, with **Add a README file** checked (this initializes the `main` branch).
-2. Upload all the files from this project (including `.github/workflows/deploy.yml`) to branch `main`, or let ChatGPT upload them through the connected GitHub tool after you create the repository.
-3. In **Settings → Pages**, choose **GitHub Actions** as the source.
-4. The **Deploy AirMath AI to GitHub Pages** workflow will publish your website. Its URL will be `https://YOUR_GITHUB_USERNAME.github.io/airmath-ai/`.
-5. Future pushes to `main` automatically redeploy the website. Refresh the page to use the new build (allow for deployment and CDN cache propagation).
+Repository: https://github.com/mreyadishere-bit/airmath-ai
+
+1. Open **Settings → Pages** in this repository.
+2. Choose **GitHub Actions** under **Build and deployment → Source**.
+3. Open **Actions → Deploy AirMath AI to GitHub Pages** to check the latest run. Use **Run workflow** if needed.
+4. When deployment succeeds, use **https://mreyadishere-bit.github.io/airmath-ai/** in your browser.
+5. Every new commit to `main` triggers deployment. Refresh the website after the workflow completes.
+
 
 ## Usage
 
@@ -27,7 +30,7 @@ AirMath AI turns finger gestures into handwritten maths on a transparent canvas 
 ## Performance
 
 - Camera video is displayed **directly by the browser**, at the device's normal refresh rate; not re-rendered by OpenCV, a Python GUI, or a 3D scene.
-- The hand detector works on a **320-pixel copy** of the camera at a separately throttled 12/18/24 FPS target. The UI remains separate from detector workload; results depend on hardware. MediaPipe uses GPU if supported, CPU otherwise.
+- The hand detector works on a **256-pixel copy** of the camera at a separately throttled 10/16/23 FPS target. The UI remains separate from detector workload; results depend on hardware. MediaPipe uses GPU if supported, CPU otherwise.
 - The OCR recognizer is a lightweight, local, **approximate** template/stroke recognizer. It does not continuously run. If high accuracy with complex equations is required, a heavier dedicated handwriting model or a server-side OCR endpoint will be necessary.
 - First use needs a network connection to load the MediaPipe JavaScript/WASM hand detector and model; later visits may reuse the browser cache, depending on its caching policies.
 

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#090e1a" />
+  <meta name="description" content="AirMath AI — write maths in the air with your finger, then solve. Runs in your browser." />
+  <title>AirMath AI — Write it. Solve it.</title>
+  <link rel="stylesheet" href="./style.css?v=3" />
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <a class="brand" href="./" aria-label="AirMath AI home"><span class="brand-icon">✦</span><span>AirMath <b>AI</b></span></a>
+      <div class="header-right"><span class="status" id="status"><span class="pulse"></span><span id="statusText">Camera is off</span></span><span class="version">v3.0 WEB</span></div>
+    </header>
+
+    <section class="intro">
+      <div><div class="eyebrow">GESTURE-POWERED MATH</div><h1>Write it in the air.<br/><span>Solve it instantly.</span></h1><p>Just your hands, a camera, and a little bit of math magic.</p></div>
+      <div class="mode-switch" role="group" aria-label="Application mode"><button class="active" id="drawMode" type="button">✎ &nbsp;Air draw</button><button id="countMode" type="button">☝ &nbsp;Finger math</button></div>
+    </section>
+
+    <main class="main-grid">
+      <section class="workspace panel" aria-label="Camera and drawing area">
+        <div class="workspace-header"><div><strong>Live canvas</strong><span class="caption-text" id="gestureLabel">Start your camera to begin</span></div><div class="frame-stats"><span id="fps">— fps</span><span class="separator">•</span><span id="handInfo">No tracking</span></div></div>
+        <div class="stage" id="stage">
+          <video id="camera" autoplay muted playsinline aria-label="Live camera without filters"></video>
+          <canvas id="ink" aria-label="Your air drawing"></canvas>
+          <canvas id="cursor" aria-hidden="true"></canvas>
+          <div class="before-camera" id="beforeCamera"><div class="start-icon">◎</div><strong>Ready when you are</strong><p>Preview your real camera feed and draw with your index finger. Camera footage stays on your device.</p><button id="startBtn" class="primary start-button" type="button">⦿ &nbsp;Enable camera</button><button id="offlineBtn" class="text-button" type="button">Try drawing with mouse / touch instead</button><small>Requires HTTPS or localhost + camera permission</small></div>
+          <div class="tracking-pill" id="trackingPill" hidden>● <span id="trackingText">TRACKING</span></div>
+          <div class="number-overlay" id="numberOverlay" hidden><div><small>NUMBER A</small><b id="overlayA">—</b></div><span>×</span><div><small>NUMBER B</small><b id="overlayB">—</b></div></div>
+        </div>
+        <div class="toolbar"><div class="toolbar-group"><button id="undoBtn" title="Undo stroke (U)" type="button">↶ <span>Undo</span></button><button id="clearBtn" title="Clear canvas (C)" type="button">⌫ <span>Clear</span></button><button id="downloadBtn" title="Save drawing as PNG" type="button">⇩ <span>Save</span></button></div><button id="solveBtn" class="primary" title="Recognize and solve (S)" type="button">✦ &nbsp;Recognize &amp; solve <span class="kbd">S</span></button></div>
+      </section>
+
+      <aside class="sidebar">
+        <section class="panel answer-panel"><div class="panel-heading"><span class="badge-icon">✦</span><strong>Smart result</strong></div><label class="form-label" for="expression">RECOGNIZED EXPRESSION <span class="subtext">(editable)</span></label><div class="input-line"><input id="expression" autocomplete="off" spellcheck="false" placeholder="Draw 12+8 or type it here" aria-label="Recognized expression"/><button id="computeBtn" type="button" title="Calculate the edited expression">↵</button></div><div class="math-result"><div class="form-label">ANSWER</div><div class="result" id="result">—</div><p id="resultHint">Draw an expression and press Recognize &amp; solve.</p></div></section>
+        <section class="panel guide-panel" id="drawGuide"><div class="panel-heading"><span class="badge-icon blue">☝</span><strong>Gesture guide</strong></div><div class="guide-item"><span class="gesture">☝</span><div><b>Index finger only</b><small>Draw freely in the air</small></div></div><div class="guide-item"><span class="gesture">✌</span><div><b>Index + middle fingers</b><small>Move between characters (pen up)</small></div></div><div class="guide-item"><span class="gesture">✊</span><div><b>Closed fist for 1 second</b><small>Recognize &amp; solve</small></div></div><div class="guide-tip">TIP: For accurate writing, draw each character separately and use ✌ between them. Or draw with your mouse/touch.</div></section>
+        <section class="panel guide-panel" id="countGuide" hidden><div class="panel-heading"><span class="badge-icon blue">☝</span><strong>Finger calculator</strong></div><p class="guide-copy">Show a number of fingers and hold it steady. Capture A, then capture B, then calculate four operations.</p><div class="finger-current">Currently showing <b id="fingerCount">—</b> fingers</div><div class="finger-grid"><div><small>A</small><b id="numberA">—</b><button id="captureA" type="button">Capture A</button></div><div><small>B</small><b id="numberB">—</b><button id="captureB" type="button">Capture B</button></div></div><button id="fingerSolve" class="primary full" type="button">Calculate all operations</button><div class="four-ops" id="fourOps" aria-live="polite"></div></section>
+        <section class="panel settings-panel"><div class="panel-heading"><span class="badge-icon">⚙</span><strong>Camera &amp; performance</strong></div><label class="form-label" for="deviceSelect">CAMERA</label><select id="deviceSelect"><option value="">Default camera</option></select><div class="setting-line"><span>Mirror preview</span><label class="toggle"><input type="checkbox" id="mirror" checked/><i></i></label></div><div class="setting-line"><span>Performance mode</span><select id="quality" aria-label="Tracking quality"><option value="fast">Fast • 12 FPS tracking</option><option value="balanced">Balanced • 18 FPS</option><option value="high">Precise • 24 FPS</option></select></div><div class="setting-line"><span>Always draw with index</span><label class="toggle"><input type="checkbox" id="easyDraw"/><i></i></label></div><button id="restartCamera" class="ghost full" type="button">↻ &nbsp;Restart camera</button><div id="errorMessage" class="error" role="alert" hidden></div></section>
+      </aside>
+    </main>
+    <footer>AirMath AI · Browser-based · Camera stays local · No video uploads · <span id="footerInfo">The first start downloads a hand-tracking model</span></footer>
+  </div>
+  <script type="module" src="./src/app.js?v=3"></script>
+</body>
+</html>

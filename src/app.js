@@ -5,6 +5,36 @@ const $=id=>document.getElementById(id);
 const stage=$('stage'),video=$('camera'),cursor=$('cursor');
 const pen=cursor.getContext('2d',{alpha:true});
 const shell=$('cameraShell');
+const workspace=document.querySelector('.workspace');
+const dock=document.querySelector('.control-dock');
+const results=$('fingerResult');
+let mirror=true;
+let fitScheduled=false;
+function fitViewport(){
+  // Fit actual camera aspect ratio within the space remaining AFTER the
+  // fixed control row and result dock. No document scroll is required.
+  const cs=getComputedStyle(workspace);
+  const ss=getComputedStyle(shell);
+  const padV=parseFloat(cs.paddingTop)+parseFloat(cs.paddingBottom);
+  const padH=parseFloat(cs.paddingLeft)+parseFloat(cs.paddingRight);
+  const gap=parseFloat(ss.rowGap)||8;
+  const availableHeight=workspace.clientHeight-padV;
+  const availableWidth=workspace.clientWidth-padH;
+  const nativeRatio=(video.videoWidth>0&&video.videoHeight>0)
+    ? video.videoWidth/video.videoHeight : 16/9;
+  const remaining=Math.max(70,availableHeight-dock.offsetHeight-results.offsetHeight-gap*2);
+  const target=Math.max(110,Math.min(1380,availableWidth,remaining*nativeRatio));
+  const rounded=Math.floor(target);
+  if(Math.abs(shell.getBoundingClientRect().width-rounded)>.5){
+    shell.style.width=rounded+'px';
+  }
+  resizeCanvas();
+}
+function requestFit(){
+  if(fitScheduled)return;
+  fitScheduled=true;
+  requestAnimationFrame(()=>{fitScheduled=false;fitViewport();});
+}
 let mirror=true;
 let trackerReady=false;
 
@@ -26,14 +56,20 @@ function resizeCanvas() {
 function syncCameraRatio() {
   if(video.videoWidth>0&&video.videoHeight>0) {
     shell.style.setProperty('--camera-ar',String(video.videoWidth/video.videoHeight));
-    requestAnimationFrame(resizeCanvas);
+    requestFit();
   }
 }
 function landmarkPosition(p) {
-  // Video and stage use the same aspect ratio after loadedmetadata.
+  // Match object-fit:contain exactly so landmarks align even when the
+  // preview temporarily letterboxes during startup or a viewport resize.
+  const sw=stage.clientWidth||1,sh=stage.clientHeight||1;
+  const vw=video.videoWidth||640,vh=video.videoHeight||480;
+  const fit=Math.min(sw/vw,sh/vh);
+  const drawnWidth=vw*fit,drawnHeight=vh*fit;
+  const left=(sw-drawnWidth)/2,top=(sh-drawnHeight)/2;
   return {
-    x:Math.max(0,Math.min(1,mirror?1-p.x:p.x)),
-    y:Math.max(0,Math.min(1,p.y))
+    x:Math.max(0,Math.min(1,(left+(mirror?1-p.x:p.x)*drawnWidth)/sw)),
+    y:Math.max(0,Math.min(1,(top+p.y*drawnHeight)/sh))
   };
 }
 const fingerUI=createFingerUI({cursor,pen,mapPoint:landmarkPosition});
@@ -46,7 +82,7 @@ const tracker=createTracker(video,{
     syncCameraRatio();
     video.addEventListener('loadedmetadata',syncCameraRatio,{once:true});
     refreshCameras();
-    resizeCanvas();
+    requestFit();
   },
   onTrackingReady:()=>{
     trackerReady=true;
@@ -75,10 +111,14 @@ const tracker=createTracker(video,{
 });
 tracker.setMode('count');
 
-new ResizeObserver(resizeCanvas).observe(stage);
-window.addEventListener('resize',resizeCanvas);
+const layoutObserver=new ResizeObserver(requestFit);
+layoutObserver.observe(workspace);
+layoutObserver.observe(dock);
+layoutObserver.observe(results);
+window.addEventListener('resize',requestFit);
+window.visualViewport?.addEventListener('resize',requestFit);
 video.addEventListener('loadedmetadata',syncCameraRatio);
-resizeCanvas();
+requestFit();
 
 async function refreshCameras() {
   if(!navigator.mediaDevices?.enumerateDevices)return;

@@ -6,13 +6,13 @@
   <meta name="theme-color" content="#090e1a" />
   <meta name="description" content="AirMath AI — write maths in the air with your finger, then solve. Runs in your browser." />
   <title>AirMath AI — Write it. Solve it.</title>
-  <link rel="stylesheet" href="./style.css?v=3" />
+  <link rel="stylesheet" href="./style.css?v=4" />
 </head>
 <body>
   <div class="app">
     <header class="header">
       <a class="brand" href="./" aria-label="AirMath AI home"><span class="brand-icon">✦</span><span>AirMath <b>AI</b></span></a>
-      <div class="header-right"><span class="status" id="status"><span class="pulse"></span><span id="statusText">Camera is off</span></span><span class="version">v3.0 WEB</span></div>
+      <div class="header-right"><span class="status" id="status"><span class="pulse"></span><span id="statusText">Camera is off</span></span><span class="version">v3.1 WEB</span></div>
     </header>
 
     <section class="intro">
@@ -27,7 +27,8 @@
           <video id="camera" autoplay muted playsinline aria-label="Live camera without filters"></video>
           <canvas id="ink" aria-label="Your air drawing"></canvas>
           <canvas id="cursor" aria-hidden="true"></canvas>
-          <div class="before-camera" id="beforeCamera"><div class="start-icon">◎</div><strong>Ready when you are</strong><p>Preview your real camera feed and draw with your index finger. Camera footage stays on your device.</p><button id="startBtn" class="primary start-button" type="button">⦿ &nbsp;Enable camera</button><button id="offlineBtn" class="text-button" type="button">Try drawing with mouse / touch instead</button><small>Requires HTTPS or localhost + camera permission</small></div>
+          <div class="before-camera" id="beforeCamera"><div class="start-icon">◎</div><strong>Ready when you are</strong><p>Preview your real camera feed and draw with your index finger. Camera footage stays on your device.</p><div class="camera-help" id="cameraHelp" role="alert" hidden></div><button id="startBtn" class="primary start-button" type="button">⦿ &nbsp;Enable camera</button><button id="offlineBtn" class="text-button" type="button">Try drawing with mouse / touch instead</button><small>Requires HTTPS or localhost + camera permission</small></div>
+          <div class="tracking-issue" id="trackingIssue" hidden><span id="trackingIssueText">Hand tracking unavailable.</span><button id="retryTracking" type="button">Retry tracking</button></div>
           <div class="tracking-pill" id="trackingPill" hidden>● <span id="trackingText">TRACKING</span></div>
           <div class="number-overlay" id="numberOverlay" hidden><div><small>NUMBER A</small><b id="overlayA">—</b></div><span>×</span><div><small>NUMBER B</small><b id="overlayB">—</b></div></div>
         </div>
@@ -43,6 +44,6 @@
     </main>
     <footer>AirMath AI · Browser-based · Camera stays local · No video uploads · <span id="footerInfo">The first start downloads a hand-tracking model</span></footer>
   </div>
-  <script type="module" src="./src/app.js?v=3"></script>
+  <script type="module" src="./src/app.js?v=4"></script>
 </body>
 </html>

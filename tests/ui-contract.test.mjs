@@ -23,4 +23,12 @@ const ids=[...js.matchAll(/\$\('([A-Za-z0-9_-]+)'\)/g),
 for(const id of [...new Set(ids)]) {
   assert.ok(html.includes('id="'+id+'"'),'Referenced element not found: '+id);
 }
+assert.ok(css.includes('height:100dvh') && css.includes('overflow:hidden'),
+  'Application must fit the viewport without page scrolling');
+assert.ok(js.includes('availableHeight-dock.offsetHeight-results.offsetHeight-gap*2'),
+  'Camera sizing must reserve room for the controls and results');
+assert.ok(finger.includes('panel.hidden=false'),
+  'Result dock must have reserved space even before an equation is solved');
+assert.ok(finger.includes('pen.shadowBlur') && finger.includes('const mesh='),
+  'Gesture visual should render a layered palm mesh and enhanced skeleton');
 console.log('Camera-first UI contract tests passed');

@@ -7,7 +7,7 @@ const ctx=ink.getContext('2d'),pen=cursor.getContext('2d');
 const s={mode:'draw',strokes:[],active:null,air:null,pointer:false,mirror:true,fist:0,fired:false,count:null,ready:null,since:0,a:null,b:null,trackerReady:false};
 const tracker=createTracker(video,{
  onHands:(hands,time)=>onHands(hands,time),
- onStatus:(message,type)=>status(message,type),
+ onStatus:(message,type)=>{status(message,type);if(type==='live' && video.srcObject && video.readyState>=2){$('beforeCamera').hidden=true;stage.classList.remove('video-hidden');}},
  onFPS:(fps,num)=>{$('fps').textContent=fps+' tracking fps';$('handInfo').textContent=num+' hand(s)';},
  onError:message=>{$('errorMessage').hidden=false;$('errorMessage').textContent=message;}
 });

@@ -6,13 +6,13 @@
   <meta name="theme-color" content="#090e1a" />
   <meta name="description" content="AirMath AI — write maths in the air with your finger, then solve. Runs in your browser." />
   <title>AirMath AI — Write it. Solve it.</title>
-  <link rel="stylesheet" href="./style.css?v=5" />
+  <link rel="stylesheet" href="./style.css?v=6" />
 </head>
 <body>
   <div class="app">
     <header class="header">
       <a class="brand" href="./" aria-label="AirMath AI home"><span class="brand-icon">✦</span><span>AirMath <b>AI</b></span></a>
-      <div class="header-right"><span class="status" id="status"><span class="pulse"></span><span id="statusText">Camera is off</span></span><span class="version">v4.0 WEB</span></div>
+      <div class="header-right"><span class="status" id="status"><span class="pulse"></span><span id="statusText">Camera is off</span></span><span class="version">v4.1 WEB</span></div>
     </header>
 
     <section class="intro">
@@ -32,7 +32,7 @@
           <div class="tracking-pill" id="trackingPill" hidden>● <span id="trackingText">TRACKING</span></div>
           <div class="finger-hud" id="fingerHUD" hidden>
             <div class="finger-hud-top">
-              <div class="finger-app-label"><span class="live-dot"></span> LIVE GESTURE CALCULATOR <small id="fingerStage">ENTER A</small></div>
+              <div class="finger-app-label"><span class="live-dot"></span> DIGIT-BY-DIGIT CALCULATOR <small id="fingerStage">ENTER A</small></div>
               <div class="finger-operands">
                 <div class="operand-card selected" id="operandA"><small>NUMBER A</small><strong id="overlayA">—</strong><span id="chunksA">Waiting...</span></div>
                 <div class="operand-divider">→</div>
@@ -41,7 +41,7 @@
             </div>
             <div class="finger-live-count" id="fingerLive">
               <small>FINGERS DETECTED</small><strong id="fingerLiveValue">—</strong>
-              <span id="fingerPreview">Show your hands</span>
+              <span id="fingerPreview">Hold a pose to add a digit</span>
             </div>
             <div class="finger-hud-bottom">
               <div class="finger-result-overlay" id="fingerResult" hidden>
@@ -51,7 +51,7 @@
               <div class="finger-command" id="fingerCommand">
                 <span class="command-text" id="fingerInstruction">Show up to ten fingers to begin.</span>
                 <div class="command-progress"><span id="commandProgress"></span></div>
-                <small class="command-legend">🙌 Hold = preview · ⤵ Hands away = add · 👍👍 = Next · ✊✊ = Equal</small>
+                <small class="command-legend">🙌 Hold = append digit · 🔄 Change pose = next digit · 👍👍 = Next · ✊✊ = Equal</small>
               </div>
             </div>
           </div>
@@ -62,22 +62,22 @@
       <aside class="sidebar">
         <section class="panel answer-panel"><div class="panel-heading"><span class="badge-icon">✦</span><strong>Smart result</strong></div><label class="form-label" for="expression">RECOGNIZED EXPRESSION <span class="subtext">(editable)</span></label><div class="input-line"><input id="expression" autocomplete="off" spellcheck="false" placeholder="Draw 12+8 or type it here" aria-label="Recognized expression"/><button id="computeBtn" type="button" title="Calculate the edited expression">↵</button></div><div class="math-result"><div class="form-label">ANSWER</div><div class="result" id="result">—</div><p id="resultHint">Draw an expression and press Recognize &amp; solve.</p></div></section>
         <section class="panel guide-panel" id="drawGuide"><div class="panel-heading"><span class="badge-icon blue">☝</span><strong>Gesture guide</strong></div><div class="guide-item"><span class="gesture">☝</span><div><b>Index finger only</b><small>Draw freely in the air</small></div></div><div class="guide-item"><span class="gesture">✌</span><div><b>Index + middle fingers</b><small>Move between characters (pen up)</small></div></div><div class="guide-item"><span class="gesture">✊</span><div><b>Closed fist for 1 second</b><small>Recognize &amp; solve</small></div></div><div class="guide-tip">TIP: For accurate writing, draw each character separately and use ✌ between them. Or draw with your mouse/touch.</div></section>
-        <section class="panel guide-panel" id="countGuide" hidden><div class="panel-heading"><span class="badge-icon blue">☝</span><strong>Finger calculator</strong></div><p class="guide-copy">Build numbers using your two hands. Hold 10 fingers, lower your hands to save 10, then repeat to make 20. The math and hand skeleton appear on your live camera.</p>
+        <section class="panel guide-panel" id="countGuide" hidden><div class="panel-heading"><span class="badge-icon blue">☝</span><strong>Finger calculator</strong></div><p class="guide-copy">Build any number digit by digit: show 5, then 3, then 5 to make 535. Hold each pose steady until the digit appears on the right. No addition between digits.</p>
           <div class="gesture-steps">
-            <div><b>🙌 Number</b><span>Hold any 1–10 fingers steady for 0.65s</span></div>
-            <div><b>⤵ Add</b><span>Lower both hands out of view for 0.45s to add that number</span></div>
+            <div><b>🙌 Number</b><span>Hold 0–9 fingers steady for 0.8s; 10 fingers can enter the token “10”</span></div>
+            <div><b>🔢 Next digit</b><span>Change finger count for the next digit. For repeated digits, lower your hands briefly first.</span></div>
             <div><b>👍👍 Next</b><span>Two thumbs up, held 1s, to move from A to B</span></div>
             <div><b>✊✊ Equal</b><span>Two closed fists, held 1.2s, to show the four results</span></div>
           </div>
           <div class="finger-current">Visible fingers <b id="fingerCount">—</b></div>
           <div class="finger-grid"><div><small>NUMBER A</small><b id="numberA">—</b></div><div><small>NUMBER B</small><b id="numberB">—</b></div></div>
-          <div class="gesture-buttons"><button id="captureA" type="button" title="Save the held finger count">+ Add chunk</button><button id="captureB" type="button" title="Move to number B">Next →</button><button id="fingerSolve" class="primary" type="button">= Calculate</button><button id="fingerUndo" type="button">↶ Undo</button><button id="fingerReset" type="button">Reset</button></div>
+          <div class="gesture-buttons"><button id="captureA" type="button" title="Manually add current finger count as a digit">+ Add digit</button><button id="captureB" type="button" title="Move to number B">Next →</button><button id="fingerSolve" class="primary" type="button">= Calculate</button><button id="fingerUndo" type="button">↶ Undo</button><button id="fingerReset" type="button">Reset</button></div>
           <div id="fourOps" class="four-ops" aria-live="polite" hidden></div></section>
         <section class="panel settings-panel"><div class="panel-heading"><span class="badge-icon">⚙</span><strong>Camera &amp; performance</strong></div><label class="form-label" for="deviceSelect">CAMERA</label><select id="deviceSelect"><option value="">Default camera</option></select><div class="setting-line"><span>Mirror preview</span><label class="toggle"><input type="checkbox" id="mirror" checked/><i></i></label></div><div class="setting-line"><span>Performance mode</span><select id="quality" aria-label="Tracking quality"><option value="fast">Fast • 12 FPS tracking</option><option value="balanced">Balanced • 18 FPS</option><option value="high">Precise • 24 FPS</option></select></div><div class="setting-line"><span>Always draw with index</span><label class="toggle"><input type="checkbox" id="easyDraw"/><i></i></label></div><button id="restartCamera" class="ghost full" type="button">↻ &nbsp;Restart camera</button><div id="errorMessage" class="error" role="alert" hidden></div></section>
       </aside>
     </main>
     <footer>AirMath AI · Browser-based · Camera stays local · No video uploads · <span id="footerInfo">The first start downloads a hand-tracking model</span></footer>
   </div>
-  <script type="module" src="./src/app.js?v=5"></script>
+  <script type="module" src="./src/app.js?v=6"></script>
 </body>
 </html>

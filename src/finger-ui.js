@@ -1,4 +1,4 @@
-import {GestureCalculator} from './gesture-math.js';
+import {GestureCalculator} from './gesture-math.js?v=7';
 
 /**
  * Minimal hand visuals and data-only UI. Never places results or controls over

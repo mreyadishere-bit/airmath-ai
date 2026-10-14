@@ -57,7 +57,7 @@ export class GestureCalculator {
   commit() {
     if(this.result) return false;
     const n=this.pending;
-    if(n===null || !Number.isInteger(n) || n<1 || n>10) {this.message='Show a number and hold still to lock it first';return false;}
+    if(n===null || !Number.isInteger(n) || n<0 || n>10) {this.message='Show a number and hold still to lock it first';return false;}
     if(this.total+n>1000000){this.message='Maximum value is 1,000,000';return false;}
     this.chunks.push(n);
     if(this.active==='A')this.a+=n;else this.b+=n;
@@ -125,7 +125,10 @@ export class GestureCalculator {
     this.command=null;this.commandSince=0;this.commandFired=false;
     const n=notes.reduce((sum,item)=>sum+item.count,0);
     this.visibleCount=n;
-    if(n===0) {this.progress=0;this.stableCount=null;this.message='Show raised fingers to input a number';return {...this.snapshot(),notes};}
+    if(n===0 && !(notes.length===1 && notes[0].gesture==='fist')) {
+      this.progress=0;this.stableCount=null;this.message='Show fingers, or one closed fist to enter zero';
+      return {...this.snapshot(),notes};
+    }
     if(n!==this.stableCount){
       this.stableCount=n;this.countSince=now;
       // The old locked value must not be added after the user changes a pose.

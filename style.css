@@ -95,3 +95,10 @@
  .finger-result-tile strong{font-size:17px}
  .finger-result-tile small,.finger-result-tile span{font-size:9px}
 }
+
+
+/* v4.1: positional, long numeric strings stay within the camera HUD. */
+.operand-card{min-width:0}
+.operand-card strong{overflow-wrap:anywhere;word-break:break-word}
+.operand-card span{white-space:normal;overflow-wrap:anywhere;max-height:32px;overflow:hidden}
+.finger-result-tile strong{overflow-wrap:anywhere;word-break:break-word}
